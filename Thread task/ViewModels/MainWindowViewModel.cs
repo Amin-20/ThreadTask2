@@ -50,6 +50,38 @@ namespace Thread_task.ViewModels
         public RelayCommand Resume { get; set; }
         Thread thread;
 
+        private void timer_Tick(int index)
+        {
+            if (IsPlay)
+            {
+                App.Current.Dispatcher.Invoke((System.Action)delegate
+                {
+                    try
+                    {
+                        var mixword = sha256(WordsListBox[index]);
+                        WordsMixListBox.Add(mixword);
+                        WordsListBox.Remove(WordsListBox[index]);
+
+                    }
+                    catch (Exception)
+                    {
+                    }
+                });
+            }
+        }
+
+        static string sha256(string randomString)
+        {
+            var crypt = new SHA256Managed();
+            string hash = String.Empty;
+            byte[] crypto = crypt.ComputeHash(Encoding.ASCII.GetBytes(randomString));
+            foreach (byte theByte in crypto)
+            {
+                hash += theByte.ToString($"x2");
+            }
+            return hash;
+        }
+
         public void Load()
         {
             App.Current.Dispatcher.Invoke((System.Action)delegate
@@ -92,7 +124,7 @@ namespace Thread_task.ViewModels
                 }
                 else
                 {
-                    MessageBox.Show("You pressed the play button without it", "Warring", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("The play button has been pressed!", "Warring", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
             });
 
@@ -116,37 +148,6 @@ namespace Thread_task.ViewModels
                 IsPlay = false;
 
             });
-        }
-        static string sha256(string randomString)
-        {
-            var crypt = new SHA256Managed();
-            string hash = String.Empty;
-            byte[] crypto = crypt.ComputeHash(Encoding.ASCII.GetBytes(randomString));
-            foreach (byte theByte in crypto)
-            {
-                hash += theByte.ToString($"x2");
-            }
-            return hash;
-        }
-
-        private void timer_Tick(int index)
-        {
-            if (IsPlay)
-            {
-                App.Current.Dispatcher.Invoke((System.Action)delegate
-                {
-                    try
-                    {
-                        var mixword = sha256(WordsListBox[index]);
-                        WordsMixListBox.Add(mixword);
-                        WordsListBox.Remove(WordsListBox[index]);
-
-                    }
-                    catch (Exception)
-                    {
-                    }
-                });
-            }
         }
     }
 }
